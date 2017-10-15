@@ -10,6 +10,8 @@ import android.view.Menu
 import android.view.MenuItem
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
+import kotlinx.android.synthetic.main.content_main.*
+import kotlinx.android.synthetic.main.nav_header_main.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -22,6 +24,18 @@ class MainActivity : AppCompatActivity() {
                 this, drawer_layout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
         drawer_layout.addDrawerListener(toggle)
         toggle.syncState()
+
+        loginBtnNavHeader.setOnClickListener {
+
+        }
+
+        addChannelBtn.setOnClickListener {
+
+        }
+
+        sendMessageBtn.setOnClickListener {
+
+        }
     }
 
     override fun onBackPressed() {

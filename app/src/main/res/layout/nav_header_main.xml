@@ -44,14 +44,14 @@
         tools:text="mika.t.leinonen@gmail.com" />
 
     <Button
-        android:id="@+id/loginBtnNavHeader"
+        android:id="@+id/loginBtnNav"
         android:layout_width="wrap_content"
         android:layout_height="32dp"
         android:layout_marginBottom="16dp"
-        android:layout_marginStart="28dp"
+        android:layout_marginStart="8dp"
         android:background="@android:color/transparent"
         android:text="Login"
-        android:textAlignment="textStart"
+        android:textAlignment="center"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 

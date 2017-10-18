@@ -1,10 +1,11 @@
-package com.example.mikat.smack
+package com.example.mikat.smack.Controller
 
 import android.content.Intent
 import android.os.Bundle
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
+import com.example.mikat.smack.R
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.content_main.*
@@ -23,9 +24,7 @@ class MainActivity : AppCompatActivity() {
         toggle.syncState()
 
         loginBtnNav.setOnClickListener {
-            val loginIntent = Intent(this, LoginActivity::class.java)
-            startActivity(loginIntent)
-
+            startActivity(Intent(this, LoginActivity::class.java))
         }
 
         addChannelBtn.setOnClickListener {

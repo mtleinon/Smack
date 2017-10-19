@@ -28,6 +28,7 @@ class LoginActivity : AppCompatActivity() {
         loginCreateUserBtn.setOnClickListener {
             val createUSerIntent = Intent(this, CreateUserActivity::class.java )
             startActivity(createUSerIntent)
+            finish()
         }
     }
 }

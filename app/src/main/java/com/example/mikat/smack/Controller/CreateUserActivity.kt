@@ -47,7 +47,7 @@ class CreateUserActivity : AppCompatActivity() {
 
             createAvatarImageView.setBackgroundColor(Color.rgb(r, g, b))
 
-            avatarColor = "[${r.toDouble() / 255}, ${r.toDouble() / 255}, ${r.toDouble() / 255}, 1]"
+            avatarColor = "[${r.toDouble() / 255}, ${g.toDouble() / 255}, ${b.toDouble() / 255}, 1]"
             println(avatarColor)
         }
 

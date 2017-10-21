@@ -24,19 +24,22 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
 
         val toggle = ActionBarDrawerToggle(
-                this, drawer_layout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
+                this, drawer_layout, toolbar,
+                R.string.navigation_drawer_open, R.string.navigation_drawer_close)
         drawer_layout.addDrawerListener(toggle)
         toggle.syncState()
 
         loginBtnNav.setOnClickListener {
             if (AuthService.isLoggedIn) {
                 UserDataService.logout()
-                userNameNavHeader.text = "Login"
+                userNameNavHeader.text = ""
                 userEMailNavHeader.text = ""
+                loginBtnNav.text = "LOGIN"
                 userImageNavHeader.setImageResource(R.drawable.profiledefault)
                 userImageNavHeader.setBackgroundColor(Color.TRANSPARENT)
             } else {

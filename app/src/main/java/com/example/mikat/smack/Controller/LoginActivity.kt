@@ -14,13 +14,16 @@ class LoginActivity : AppCompatActivity() {
         setContentView(R.layout.activity_login)
 
         loginLoginBtn.setOnClickListener {
-            AuthService.loginUser(this, loginEmailText.text.toString(),
-                    loginPasswordText.text.toString()){
-                loginSucceeded ->
-                if(loginSucceeded) {
-                    println("login: SUCCEECED")
-                } else {
-                    println("login: FAILED")
+            val email = loginEmailText.text.toString()
+            val password = loginPasswordText.text.toString()
+            AuthService.loginUser(this, email, password){
+                loginSuccess ->
+                if(loginSuccess) {
+                    AuthService.findUserByEmail(this) { findSuccess ->
+                        if (findSuccess) {
+                            finish()
+                        }
+                    }
                 }
             }
         }

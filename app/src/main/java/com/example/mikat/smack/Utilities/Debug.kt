@@ -9,7 +9,8 @@ fun TEST (msg: String = " ") {
     val st = Throwable().getStackTrace()
     var i = 0
     while (st[i].fileName == "Debug.kt") {
-            i++
+        //println(st[i])
+        i++
     }
     Log.d ( "TEST ${st[i].className.substringAfterLast('.')
             .replace("$1", "")

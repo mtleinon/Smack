@@ -27,6 +27,7 @@ import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.content_main.*
 import kotlinx.android.synthetic.main.nav_header_main.*
 import com.example.mikat.smack.Model.Channel
+import com.example.mikat.smack.Model.Message
 
 class MainActivity : AppCompatActivity() {
 
@@ -59,6 +60,22 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private val onNewMessage = Emitter.Listener { args ->
+
+        runOnUiThread {
+            val newMessage = Message(
+                    args[0] as String,
+                    args[3] as String,
+                    args[2] as String,
+                    args[4] as String,
+                    args[5] as String,
+                    args[6] as String,
+                    args[7] as String)
+            MessageService.messages.add(newMessage)
+            TEST(newMessage.toString())
+        }
+    }
+
     override fun onDestroy() {
         socket.disconnect()
         LocalBroadcastManager.getInstance(this).unregisterReceiver(userDataChangeReceiver)
@@ -73,7 +90,7 @@ class MainActivity : AppCompatActivity() {
 
         socket.connect()
         socket.on("channelCreated", onNewChannel)
-
+        socket.on("messageCreated", onNewMessage )
         val toggle = ActionBarDrawerToggle(
                 this, drawer_layout, toolbar,
                 R.string.navigation_drawer_open, R.string.navigation_drawer_close)
@@ -125,6 +142,14 @@ class MainActivity : AppCompatActivity() {
         }
 
         sendMessageBtn.setOnClickListener {
+            if (App.prefs.isLoggedIn && messageTextField.text.isNotEmpty() && selectedChannel != null) {
+                val userId = UserDataService.id
+                val channelId = selectedChannel!!.id
+                socket.emit("newMessage", messageTextField.text.toString(), userId, channelId,
+                        UserDataService.name, UserDataService.avatarName, UserDataService.avatarColor)
+                messageTextField.text.clear()
+            }
+
         }
 
         channel_list.setOnItemClickListener { _, _, i, _ ->

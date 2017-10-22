@@ -27,7 +27,7 @@ class LoginActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
             enableSpinner(true)
-            AuthService.loginUser(this, email, password)
+            AuthService.loginUser(email, password)
             {
                 loginSuccess ->
                 if(loginSuccess) {
@@ -50,14 +50,7 @@ class LoginActivity : AppCompatActivity() {
             finish()
         }
     }
-/*
-    fun hideKeyboard() {
-        val inputManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        if (inputManager.isAcceptingText) {
-            inputManager.hideSoftInputFromWindow(currentFocus.windowToken, 0)
-        }
-    }
-*/
+
     fun errorToast(reason: String){
         Toast.makeText(this, "$reason, Please try again", Toast.LENGTH_LONG)
                 .show()

@@ -32,6 +32,7 @@ class MainActivity : AppCompatActivity() {
 
     val socket = IO.socket(SOCKET_URL)
     lateinit var channelAdapter: ArrayAdapter<Channel>
+    var selectedChannel : Channel? = null
 
     private fun setupAdapters() {
         channelAdapter = ArrayAdapter(this,android.R.layout.simple_list_item_1,
@@ -109,7 +110,7 @@ class MainActivity : AppCompatActivity() {
             val dialogView = layoutInflater.inflate(R.layout.add_channel_dialog, null)
             builder.setView(dialogView)
                     .setPositiveButton("Add") {
-                        dialogInterface, i ->
+                        _, i ->
                         val nameTextField = dialogView.findViewById<EditText>(R.id.addChannelNameTxt)
                         val descTextField = dialogView.findViewById<EditText>(R.id.addChannelDescTxt)
                         val channelName = nameTextField.text.toString()
@@ -126,6 +127,11 @@ class MainActivity : AppCompatActivity() {
         sendMessageBtn.setOnClickListener {
         }
 
+        channel_list.setOnItemClickListener { _, _, i, _ ->
+            selectedChannel = MessageService.channels[i]
+            drawer_layout.closeDrawer(GravityCompat.START)
+            updateMainChannelName()
+        }
     }
 
     private val userDataChangeReceiver = object: BroadcastReceiver() {
@@ -139,13 +145,21 @@ class MainActivity : AppCompatActivity() {
                         UserDataService.avatarColor))
                 loginBtnNav.text = "Logout"
 
-                MessageService.getChannels(context) {complete ->
+                MessageService.getChannels {complete ->
                     if (complete) {
-                        channelAdapter.notifyDataSetChanged()
+                        if (MessageService.channels.count() > 0) {
+                            selectedChannel = MessageService.channels.first()
+                            channelAdapter.notifyDataSetChanged()
+                            updateMainChannelName()
+                        }
                     }
                 }
             }
         }
+    }
+
+    fun updateMainChannelName(){
+        mainChannelName.text = "#${selectedChannel?.name}"
     }
 
     override fun onBackPressed() {

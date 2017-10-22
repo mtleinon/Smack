@@ -67,14 +67,12 @@ class CreateUserActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            AuthService.registerUser(this,
-                    email,
-                    password){ registerSuccess ->
+            AuthService.registerUser(email, password){ registerSuccess ->
                 if (registerSuccess) {
-                    AuthService.loginUser(this, email, password ) {
+                    AuthService.loginUser(email, password ) {
                         loginSuccess ->
                         if (loginSuccess){
-                            AuthService.createUser(this, userName, email,
+                            AuthService.createUser(userName, email,
                                     userAvatar,
                                     avatarColor) {
                                 createSuccess ->

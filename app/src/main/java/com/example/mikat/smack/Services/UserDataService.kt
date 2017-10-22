@@ -1,6 +1,7 @@
 package com.example.mikat.smack.Services
 
 import android.graphics.Color
+import com.example.mikat.smack.Controller.App
 import com.example.mikat.smack.R.id.userNameNavHeader
 import kotlinx.android.synthetic.main.nav_header_main.*
 import java.util.*
@@ -23,9 +24,9 @@ object UserDataService {
         email = ""
         name = ""
 
-        AuthService.authToken = ""
-        AuthService.userEmail = ""
-        AuthService.isLoggedIn = false
+        App.prefs.authToken = ""
+        App.prefs.userEmail = ""
+        App.prefs.isLoggedIn = false
     }
 
     fun returnAvatarColor(components: String) : Int {

@@ -81,8 +81,15 @@ class MainActivity : AppCompatActivity() {
 
         setupAdapters()
 
+        LocalBroadcastManager.getInstance(this).registerReceiver(
+                userDataChangeReceiver, IntentFilter(BROADCAST_USER_DATA_CHANGE))
+
+        if (App.prefs.isLoggedIn){
+            AuthService.findUserByEmail(this){}
+        }
+
         loginBtnNav.setOnClickListener {
-            if (AuthService.isLoggedIn) {
+            if (App.prefs.isLoggedIn) {
                 UserDataService.logout()
                 userNameNavHeader.text = ""
                 userEMailNavHeader.text = ""
@@ -95,7 +102,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         addChannelBtn.setOnClickListener {
-            if (!AuthService.isLoggedIn) {
+            if (!App.prefs.isLoggedIn) {
                 return@setOnClickListener
             }
             val builder = AlertDialog.Builder(this)
@@ -118,14 +125,12 @@ class MainActivity : AppCompatActivity() {
 
         sendMessageBtn.setOnClickListener {
         }
-        LocalBroadcastManager.getInstance(this).registerReceiver(
-                userDataChangeReceiver, IntentFilter(BROADCAST_USER_DATA_CHANGE))
 
     }
 
     private val userDataChangeReceiver = object: BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent?) {
-            if (AuthService.isLoggedIn) {
+            if (App.prefs.isLoggedIn) {
                 userNameNavHeader.text = UserDataService.name
                 userEMailNavHeader.text = UserDataService.email
                 userImageNavHeader.setImageResource(resources.getIdentifier(

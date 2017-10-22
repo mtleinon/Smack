@@ -48,31 +48,37 @@ class MainActivity : AppCompatActivity() {
     }
 
     private val onNewChannel = Emitter.Listener { args ->
-        runOnUiThread {
-            val  channelName = args[0] as String
-            val  channelDescription = args[1] as String
-            val  channelId = args[2] as String
-
-            val newChannel = Channel (channelName, channelDescription, channelId)
-            MessageService.channels.add(newChannel)
-            channelAdapter.notifyDataSetChanged()
-            TEST("${newChannel.name} ${newChannel.description} ${newChannel.id}")
+        if (App.prefs.isLoggedIn) {
+            runOnUiThread {
+                MessageService.channels.add(
+                        Channel(
+                                args[0] as String,
+                                args[1] as String,
+                                args[2] as String)
+                )
+                channelAdapter.notifyDataSetChanged()
+                TEST("${MessageService.channels.last().name}")
+            }
         }
     }
 
     private val onNewMessage = Emitter.Listener { args ->
-
-        runOnUiThread {
-            val newMessage = Message(
-                    args[0] as String,
-                    args[3] as String,
-                    args[2] as String,
-                    args[4] as String,
-                    args[5] as String,
-                    args[6] as String,
-                    args[7] as String)
-            MessageService.messages.add(newMessage)
-            TEST(newMessage.toString())
+        if (App.prefs.isLoggedIn) {
+            runOnUiThread {
+                if (args[2] as String == selectedChannel?.id) {
+                    MessageService.messages.add(
+                            Message(
+                                    args[0] as String,
+                                    args[3] as String,
+                                    args[2] as String,
+                                    args[4] as String,
+                                    args[5] as String,
+                                    args[6] as String,
+                                    args[7] as String)
+                    )
+                    TEST(MessageService.messages.last().toString())
+                }
+            }
         }
     }
 
@@ -130,10 +136,10 @@ class MainActivity : AppCompatActivity() {
                         _, i ->
                         val nameTextField = dialogView.findViewById<EditText>(R.id.addChannelNameTxt)
                         val descTextField = dialogView.findViewById<EditText>(R.id.addChannelDescTxt)
-                        val channelName = nameTextField.text.toString()
-                        val channelDesc = descTextField.text.toString()
 
-                        socket.emit("newChannel", channelName, channelDesc)
+                        socket.emit("newChannel",
+                                nameTextField.text.toString(),
+                                descTextField.text.toString())
                     }
                     .setNegativeButton("Cancel") {
                         dialogInterface, i ->
@@ -143,10 +149,13 @@ class MainActivity : AppCompatActivity() {
 
         sendMessageBtn.setOnClickListener {
             if (App.prefs.isLoggedIn && messageTextField.text.isNotEmpty() && selectedChannel != null) {
-                val userId = UserDataService.id
-                val channelId = selectedChannel!!.id
-                socket.emit("newMessage", messageTextField.text.toString(), userId, channelId,
-                        UserDataService.name, UserDataService.avatarName, UserDataService.avatarColor)
+                socket.emit("newMessage",
+                        messageTextField.text.toString(),
+                        UserDataService.id,
+                        selectedChannel!!.id,
+                        UserDataService.name,
+                        UserDataService.avatarName,
+                        UserDataService.avatarColor)
                 messageTextField.text.clear()
             }
 
@@ -185,6 +194,15 @@ class MainActivity : AppCompatActivity() {
 
     fun updateMainChannelName(){
         mainChannelName.text = "#${selectedChannel?.name}"
+
+        MessageService.getMessages(selectedChannel!!.id) { complete ->
+            if(complete) {
+                for (message in MessageService.messages) {
+                    TEST(message.message)
+                }
+            }
+        }
+
     }
 
     override fun onBackPressed() {

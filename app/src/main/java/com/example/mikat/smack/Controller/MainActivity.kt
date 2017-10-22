@@ -11,6 +11,7 @@ import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.LinearLayoutManager
 import android.widget.ArrayAdapter
 import android.widget.EditText
 import com.example.mikat.smack.R
@@ -28,17 +29,25 @@ import kotlinx.android.synthetic.main.content_main.*
 import kotlinx.android.synthetic.main.nav_header_main.*
 import com.example.mikat.smack.Model.Channel
 import com.example.mikat.smack.Model.Message
+import com.example.mikat.smack.adapters.MessageAdapter
 
 class MainActivity : AppCompatActivity() {
 
     val socket = IO.socket(SOCKET_URL)
     lateinit var channelAdapter: ArrayAdapter<Channel>
+    lateinit var messageAdapter: MessageAdapter
+
+
     var selectedChannel : Channel? = null
 
     private fun setupAdapters() {
         channelAdapter = ArrayAdapter(this,android.R.layout.simple_list_item_1,
                 MessageService.channels)
         channel_list.adapter = channelAdapter
+
+        messageAdapter = MessageAdapter(this, MessageService.messages)
+        messageListView.adapter = messageAdapter
+        messageListView.layoutManager = LinearLayoutManager(this)
     }
 
     override fun onResume() {
@@ -77,6 +86,8 @@ class MainActivity : AppCompatActivity() {
                                     args[7] as String)
                     )
                     TEST(MessageService.messages.last().toString())
+                    messageAdapter.notifyDataSetChanged()
+                    messageListView.smoothScrollToPosition(messageAdapter.itemCount - 1)
                 }
             }
         }
@@ -115,6 +126,8 @@ class MainActivity : AppCompatActivity() {
         loginBtnNav.setOnClickListener {
             if (App.prefs.isLoggedIn) {
                 UserDataService.logout()
+                channelAdapter.notifyDataSetChanged()
+                messageAdapter.notifyDataSetChanged()
                 userNameNavHeader.text = ""
                 userEMailNavHeader.text = ""
                 loginBtnNav.text = "LOGIN"
@@ -197,8 +210,9 @@ class MainActivity : AppCompatActivity() {
 
         MessageService.getMessages(selectedChannel!!.id) { complete ->
             if(complete) {
-                for (message in MessageService.messages) {
-                    TEST(message.message)
+                messageAdapter.notifyDataSetChanged()
+                if (messageAdapter.itemCount > 0) {
+                    messageListView.smoothScrollToPosition(messageAdapter.itemCount -1)
                 }
             }
         }
